@@ -17,7 +17,7 @@ Position CreatePerson(char* name, char* surname, int birth);
 Position FindLast(Position head);
 int InsertAfter(Position prevPerson, Position newPerson);                       // 3.A)
 int PrependList(Position head, char* name, char* surname, int birth);           // 2.A) (prepend - add to the beginning)
-int PrintList(Position head, Position firstPerson);                             // 2.B)
+int PrintList(Position head);                                                   // 2.B)
 int AppendList(Position head, char* name, char* surname, int birth);            // 2.C) (append - add to the end)
 Position FindSurname(Position head, char* surname);                             // 2.D)
 Position FindBefore(Position head, Position person);
@@ -40,6 +40,7 @@ int main(){
     Position pAnakin = &Anakin, pPadme = &Padme;
     FILE *f = NULL;
 
+    // nedostaje menu (mozda dodati switch-case?)
     pLeia = CreatePerson("Leia", "Organa", 1111);
     pHan = CreatePerson("Han", "Solo", 1105);
     pYoda = CreatePerson("Yoda", "Gremlin", 0001);
@@ -52,28 +53,28 @@ int main(){
     InsertAfter(pHan, pYoda);
 
     // prvi ispis liste
-    PrintList(pHead, pHead);
+    PrintList(pHead);
 
     // umetanje osobe na pocetak liste
     PrependList(pHead, "Luke", "Skywalker", 1111);
     // umetanje osobe na kraj liste
     AppendList(pHead, "Obi", "Wan Kenobi", 950);
     printf("\n\nIspis liste nakon unosa nove osobe na pocetak i na kraj liste:");
-    PrintList(pHead, pHead);
+    PrintList(pHead);
 
     // trazenje po prezimenu
     printf("\n\nPostoji li osoba prezimena Gremlin?\nPronadena osoba: %s %s\n", (FindSurname(pHead, "Gremlin"))->name, (FindSurname(pHead, "Gremlin"))->surname);
     // brisanje postojece osobe
     DeletePerson(pHead, pYoda);
     printf("\n\nIspis liste nakon brisanja osobe:");
-    PrintList(pHead, pHead);
+    PrintList(pHead);
 
     // umetanje osobe prije neke druge osobe
     InsertBefore(pHead, pAnakin, FindSurname(pHead, "Wan Kenobi"));
     // (ponovno) umetanje osobe nakon neke druge osobe, zbog 3. zadatka
     InsertAfter(pAnakin, pPadme);
     printf("\n\nKonacan ispis svih osoba na listi:");
-    PrintList(pHead, pHead);
+    PrintList(pHead);
 
     // sortiranje liste po prezimenu
     SortBySurname(pHead);
@@ -88,7 +89,7 @@ int main(){
     CreateAndSortBySurname(pHead2, "Rey", "Skywalker", 1145);
     CreateAndSortBySurname(pHead2, "Finn", "Stormtrooper", 1150);
     CreateAndSortBySurname(pHead2, "Poe", "Dameron", 1155);
-    PrintList(pHead2, pHead2);
+    PrintList(pHead2);
 
     return 0;
 }
@@ -153,15 +154,9 @@ int PrependList(Position head, char* name, char* surname, int birth){
     return 0;
 }
 
-int PrintList(Position head, Position firstPerson){
+int PrintList(Position head){
 
-    Position temp = firstPerson;
-    
-    // u slucaju da ne znamo tko se nalazi na prvoj poziciji, a zelimo napraviti ispis od pocetka liste: "head, head"
-    // ako zelimo ispisati listu od neke odredene osobe: "head, zeljenaOsoba"
-    if(temp == head){
-        temp = head->next;
-    }
+    Position temp = head->next;
 
     while(temp){
         printf("\n%s %s, %d.", temp->name, temp->surname, temp->birth);
@@ -280,7 +275,6 @@ int CopyToDocument(FILE *f, Position head){
 int CopyFromDocument(FILE *f){
 
     char buffer[MAX_LINE] = {0};
-    int i, n = 0;
 
     f = fopen("sortbysurname.txt", "r");
 
@@ -290,13 +284,6 @@ int CopyFromDocument(FILE *f){
     }
 
     while(!feof(f)){
-        fgets(buffer, MAX_LINE, f);
-        n++;
-    }
-
-    rewind(f);
-
-    for(i=0; i<n-1; i++){
         fgets(buffer, MAX_LINE, f);
         printf("%s", buffer);
     }
