@@ -1,3 +1,4 @@
+#define _CRT_SECURE_NO_WARNINGS
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -19,6 +20,7 @@ int PrintList(Position head);                                   // ispisuje poli
 int PrintPolynomial(Position head);                             // ispisuje polinom u matematickom obliku
 int Zbroj(Position one, Position two, Position result);
 int Umnozak(Position one, Position two, Position result);
+int SimplifyPoly(Position head);                                // zbraja koeficijente istog eksponenta
 
 int main(){
 
@@ -40,10 +42,13 @@ int main(){
     Umnozak(&head1, &head2, &umnozak);
 
     printf("\nZbroj polinoma:\n");
+    SimplifyPoly(&zbroj);
     PrintPolynomial(&zbroj);
 
     printf("\nUmnozak polinoma:\n");
-    PrintPolynomial(&umnozak);
+    PrintPolynomial(&umnozak);  // ispis cijelog polinoma, jer funkcija SimplifyPoly ne radi za umnozak iz nekog razloga?? (popravi)
+    //SimplifyPoly(&umnozak);
+    //PrintPolynomial(&umnozak);
 
     return 0;
 }
@@ -229,6 +234,25 @@ int Umnozak(Position one, Position two, Position result){
             temp2 = temp2->next;
         }
         temp1 = temp1->next;
+    }
+
+    return EXIT_SUCCESS;
+}
+
+int SimplifyPoly(Position head){
+
+    Position prev = NULL, temp = NULL;
+
+    prev = head;
+
+    while(prev->next!=NULL){
+        temp = prev->next;
+        if(prev->expo == temp->expo){
+            prev->coef = prev->coef + temp->coef;
+            prev->next = temp->next;
+            free(temp);
+        }
+        prev = prev->next;
     }
 
     return EXIT_SUCCESS;
